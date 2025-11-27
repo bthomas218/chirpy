@@ -4,7 +4,7 @@ import config from "../config.js";
 
 const router = express.Router();
 
-router.get("/metrics", (req: Request, res: Response) => {
+router.get("/metrics", async (req: Request, res: Response) => {
   res.set("Content-Type", "text/html; charset=utf-8").send(`<html>
   <body>
     <h1>Welcome, Chirpy Admin</h1>
@@ -13,7 +13,7 @@ router.get("/metrics", (req: Request, res: Response) => {
 </html>`);
 });
 
-router.post("/reset", (req: Request, res: Response) => {
+router.post("/reset", async (req: Request, res: Response) => {
   config.fileserverHits = 0;
   res
     .set("Content-Type", "text/plain; charset=utf-8")
