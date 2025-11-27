@@ -1,7 +1,8 @@
 import express from "express";
-import { BadRequestError } from "../utils/errorClasses.js";
+import { BadRequestError, NotFoundError } from "../utils/errorClasses.js";
 import { db } from "../db/index.js";
 import { users, posts } from "../db/schema.js";
+import { eq } from "drizzle-orm";
 const router = express.Router();
 const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];
 router.get("/healthz", async (req, res) => {
@@ -44,5 +45,15 @@ router.get("/chirps", async (req, res) => {
         orderBy: (posts, { asc }) => [asc(posts.createdAt)],
     });
     res.json(result);
+});
+router.get("/chirps/:id", async (req, res) => {
+    const result = await db
+        .select()
+        .from(posts)
+        .where(eq(posts.id, req.params.id));
+    if (result.length > 0) {
+        res.json(result[0]);
+    }
+    throw new NotFoundError("Post Not Found");
 });
 export default router;
