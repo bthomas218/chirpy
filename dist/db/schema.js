@@ -8,3 +8,12 @@ export const users = pgTable("users", {
         .$onUpdate(() => new Date()),
     email: varchar("email", { length: 256 }).unique().notNull(),
 });
+export const posts = pgTable("posts", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at"),
+    body: varchar("body", { length: 140 }).notNull(),
+    userId: uuid("userId")
+        .references(() => users.id, { onDelete: "cascade" })
+        .notNull(),
+});
