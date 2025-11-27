@@ -4,6 +4,13 @@ import middlewareMetricsInc from "./middleware/metrics.js";
 import errorHandlingMiddleware from "./middleware/errors.js";
 import { default as apiRouter } from "./routes/apiRouter.js";
 import { default as adminRouter } from "./routes/adminRouter.js";
+import config from "./config.js";
+import postgres from "postgres";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { drizzle } from "drizzle-orm/postgres-js";
+
+const migrationClient = postgres(config.db.url, { max: 1 });
+await migrate(drizzle(migrationClient), config.db.migrationConfig);
 
 const app = express();
 const PORT = 8080;
