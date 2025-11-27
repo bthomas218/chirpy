@@ -8,6 +8,7 @@ process.loadEnvFile();
 
 type APIConfig = {
   fileserverHits: number;
+  platform: string;
   db: DBconfig;
 };
 
@@ -26,6 +27,7 @@ function envOrThrow(key: string) {
 
 const config: APIConfig = {
   fileserverHits: 0,
+  platform: envOrThrow("PLATFORM"),
   db: {
     url: envOrThrow("DB_URL"),
     migrationConfig: migrationConfig,

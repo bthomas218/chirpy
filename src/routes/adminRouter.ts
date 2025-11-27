@@ -1,6 +1,9 @@
 import express from "express";
 import type { Request, Response } from "express";
 import config from "../config.js";
+import { ForbiddenError } from "../utils/errorClasses.js";
+import { db } from "../db/index.js";
+import { sql } from "drizzle-orm";
 
 const router = express.Router();
 
@@ -14,10 +17,17 @@ router.get("/metrics", async (req: Request, res: Response) => {
 });
 
 router.post("/reset", async (req: Request, res: Response) => {
+  if (config.platform !== "dev") {
+    throw new ForbiddenError("Forbidden"); // dangerous enpoint can only be acessed in a development enviroment
+  }
   config.fileserverHits = 0;
+
+  const query = sql.raw(`TRUNCATE TABLE users RESTART IDENTITY CASCADE;`);
+  await db.execute(query);
+
   res
     .set("Content-Type", "text/plain; charset=utf-8")
-    .send("Fileserver hits counter reset.");
+    .send("Fileserver hits counter reset and users deleted.");
 });
 
 export default router;

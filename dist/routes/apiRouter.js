@@ -1,5 +1,7 @@
 import express from "express";
 import { BadRequestError } from "../utils/errorClasses.js";
+import { db } from "../db/index.js";
+import { users } from "../db/schema.js";
 const router = express.Router();
 const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];
 router.get("/healthz", async (req, res) => {
@@ -21,5 +23,12 @@ router.post("/validate_chirp", async (req, res) => {
     else {
         throw new BadRequestError("Chirp is too long. Max length is 140");
     }
+});
+router.post("/users", async (req, res) => {
+    const result = await db
+        .insert(users)
+        .values({ email: req.body.email })
+        .returning();
+    res.status(201).json(result[0]);
 });
 export default router;
