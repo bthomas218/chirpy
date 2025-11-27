@@ -25,7 +25,7 @@ const validatechirp = async (body: string) => {
         return word;
       })
       .join(" ");
-    return body;
+    return cleanedBody;
   } else {
     throw new BadRequestError("Chirp is too long. Max length is 140");
   }
