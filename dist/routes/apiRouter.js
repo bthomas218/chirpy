@@ -39,4 +39,10 @@ router.post("/chirps", async (req, res) => {
         .returning();
     res.status(201).json(result[0]);
 });
+router.get("/chirps", async (req, res) => {
+    const result = await db.query.posts.findMany({
+        orderBy: (posts, { asc }) => [asc(posts.createdAt)],
+    });
+    res.json(result);
+});
 export default router;
