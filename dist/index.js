@@ -7,6 +7,6 @@ const PORT = 8080;
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
-app.use("/api", apiRouter);
+app.use("/admin", apiRouter);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 app.use(middlewareLogResponses);
