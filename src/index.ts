@@ -7,11 +7,11 @@ import { default as adminRouter } from "./routes/adminRouter.js";
 const app = express();
 const PORT = 8080;
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
-});
-
+app.use(middlewareLogResponses);
 app.use("/api", apiRouter);
 app.use("/admin", adminRouter);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
-app.use(middlewareLogResponses);
+
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
+});
