@@ -9,7 +9,7 @@ router.get("/metrics", (req, res) => {
   </body>
 </html>`);
 });
-router.get("/reset", (req, res) => {
+router.post("/reset", (req, res) => {
     config.fileserverHits = 0;
     res
         .set("Content-Type", "text/plain; charset=utf-8")

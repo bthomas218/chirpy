@@ -13,7 +13,7 @@ router.get("/metrics", (req: Request, res: Response) => {
 </html>`);
 });
 
-router.get("/reset", (req: Request, res: Response) => {
+router.post("/reset", (req: Request, res: Response) => {
   config.fileserverHits = 0;
   res
     .set("Content-Type", "text/plain; charset=utf-8")
