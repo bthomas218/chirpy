@@ -7,7 +7,9 @@ import { default as adminRouter } from "./routes/adminRouter.js";
 const app = express();
 const PORT = 8080;
 
+app.use(express.json());
 app.use(middlewareLogResponses);
+
 app.use("/api", apiRouter);
 app.use("/admin", adminRouter);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
