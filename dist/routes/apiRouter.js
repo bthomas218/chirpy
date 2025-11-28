@@ -1,8 +1,9 @@
 import express from "express";
-import { BadRequestError, NotFoundError } from "../utils/errorClasses.js";
+import { BadRequestError, NotFoundError, UnauthorizedError, } from "../utils/errorClasses.js";
 import { db } from "../db/index.js";
 import { users, posts } from "../db/schema.js";
 import { eq } from "drizzle-orm";
+import { hashPassword, verifyPassword } from "../services/auth.js";
 const router = express.Router();
 const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];
 router.get("/healthz", async (req, res) => {
@@ -28,9 +29,29 @@ const validatechirp = async (body) => {
 router.post("/users", async (req, res) => {
     const result = await db
         .insert(users)
-        .values({ email: req.body.email })
+        .values({
+        email: req.body.email,
+        password: await hashPassword(req.body.password),
+    })
         .returning();
     res.status(201).json(result[0]);
+});
+router.post("/login", async (req, res) => {
+    const result = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, req.body.email));
+    if (result.length > 0) {
+        if (await verifyPassword(req.body.password, result[0].password)) {
+            res.status(200).json(result[0]);
+        }
+        else {
+            throw new UnauthorizedError("Invalid Username or Password");
+        }
+    }
+    else {
+        throw new NotFoundError("User not found");
+    }
 });
 router.post("/chirps", async (req, res) => {
     const cleanedBody = await validatechirp(req.body.body);

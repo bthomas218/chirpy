@@ -1,14 +1,19 @@
 import express from "express";
 import type { Request, Response } from "express";
-import { BadRequestError, NotFoundError } from "../utils/errorClasses.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../utils/errorClasses.js";
 import { db } from "../db/index.js";
 import { users, posts } from "../db/schema.js";
+import type { NewUser } from "../db/schema.js";
 import { eq } from "drizzle-orm";
-import { resourceLimits } from "worker_threads";
-import { resourceUsage } from "process";
+import { hashPassword, verifyPassword } from "../services/auth.js";
 
 const router = express.Router();
 const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];
+type UserResponse = Omit<NewUser, "password">;
 
 router.get("/healthz", async (req: Request, res: Response) => {
   res.set("Content-Type", "text/plain; charset=utf-8").send("OK");
@@ -33,12 +38,40 @@ const validatechirp = async (body: string) => {
 
 router.post(
   "/users",
-  async (req: Request<{}, {}, { email: string }>, res: Response) => {
+  async (
+    req: Request<{}, {}, { email: string; password: string }>,
+    res: Response
+  ) => {
     const result = await db
       .insert(users)
-      .values({ email: req.body.email })
+      .values({
+        email: req.body.email,
+        password: await hashPassword(req.body.password),
+      })
       .returning();
-    res.status(201).json(result[0]);
+    res.status(201).json(result[0] as UserResponse);
+  }
+);
+
+router.post(
+  "/login",
+  async (
+    req: Request<{}, {}, { email: string; password: string }>,
+    res: Response
+  ) => {
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, req.body.email));
+    if (result.length > 0) {
+      if (await verifyPassword(req.body.password, result[0].password)) {
+        res.status(200).json(result[0] as UserResponse);
+      } else {
+        throw new UnauthorizedError("Invalid Username or Password");
+      }
+    } else {
+      throw new NotFoundError("User not found");
+    }
   }
 );
 
