@@ -1,13 +1,13 @@
 import { NotFoundError, UnauthorizedError } from "../utils/errorClasses.js";
 import { getUserByEmail } from "../db/queries/users.js";
 import { makeJWT, makeRefreshToken, verifyPassword } from "../utils/auth.js";
+import { omit } from "../utils/typing.js";
 import config from "../config.js";
 import {
   createRefreshToken,
   getRefreshToken,
   revokeTokenInDb,
 } from "../db/queries/refreshTokens.js";
-import { User } from "../db/schema.js";
 
 const ONE_HOUR = 3600; // In seconds
 const SIXTY_DAYS = 1000 * 60 * 60 * 24 * 60; // In miliseconds
@@ -35,8 +35,11 @@ export async function loginUser(email: string, password: string) {
     expiresAt: new Date(Date.now() + SIXTY_DAYS),
   });
 
-  const userResponse = user as Omit<User, "password">;
-  return { user: userResponse, token, refreshToken };
+  const userResponse = Object.assign(omit(user, ["password"]), {
+    token: token,
+    refreshToken: refreshToken,
+  });
+  return userResponse;
 }
 
 /**

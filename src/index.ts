@@ -9,6 +9,7 @@ import postgres from "postgres";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { drizzle } from "drizzle-orm/postgres-js";
 import authRouter from "./routes/authRouter.js";
+import userRouter from "./routes/userRouter.js";
 
 const migrationClient = postgres(config.db.url, { max: 1 });
 await migrate(drizzle(migrationClient), config.db.migrationConfig);
@@ -19,7 +20,7 @@ const PORT = 8080;
 app.use(express.json());
 app.use(middlewareLogResponses);
 
-app.use("/api", apiRouter, authRouter);
+app.use("/api", apiRouter, authRouter, userRouter);
 app.use("/admin", adminRouter);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 

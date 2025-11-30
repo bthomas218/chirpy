@@ -7,12 +7,9 @@ export async function loginUser(
 ) {
   const { email, password } = req.body;
 
-  const { user, token, refreshToken } = await authService.loginUser(
-    email,
-    password
-  );
+  const user = await authService.loginUser(email, password);
 
-  res.status(200).json({ user, token, refreshToken });
+  res.status(200).json(user);
 }
 
 export async function refreshUser(req: Request, res: Response) {

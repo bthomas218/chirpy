@@ -1,7 +1,7 @@
-//TODO: make auth services
 import { NotFoundError, UnauthorizedError } from "../utils/errorClasses.js";
 import { getUserByEmail } from "../db/queries/users.js";
-import { makeJWT, makeRefreshToken, verifyPassword, } from "../utils/auth.js";
+import { makeJWT, makeRefreshToken, verifyPassword } from "../utils/auth.js";
+import { omit } from "../utils/typing.js";
 import config from "../config.js";
 import { createRefreshToken, getRefreshToken, revokeTokenInDb, } from "../db/queries/refreshTokens.js";
 const ONE_HOUR = 3600; // In seconds
@@ -26,8 +26,11 @@ export async function loginUser(email, password) {
         userId: user.id,
         expiresAt: new Date(Date.now() + SIXTY_DAYS),
     });
-    const userResponse = user;
-    return { user: userResponse, token, refreshToken };
+    const userResponse = Object.assign(omit(user, ["password"]), {
+        token: token,
+        refreshToken: refreshToken,
+    });
+    return userResponse;
 }
 /**
  * Uses a refresh token to get a new acess token

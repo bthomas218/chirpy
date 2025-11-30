@@ -44,23 +44,6 @@ const validatechirp = async (body: string) => {
 };
 
 router.post(
-  "/users",
-  async (
-    req: Request<{}, {}, { email: string; password: string }>,
-    res: Response
-  ) => {
-    const result = await db
-      .insert(users)
-      .values({
-        email: req.body.email,
-        password: await hashPassword(req.body.password),
-      })
-      .returning();
-    res.status(201).json(result[0] as UserResponse);
-  }
-);
-
-router.post(
   "/chirps",
   async (
     req: Request<{}, {}, { body: string; userId: string }>,
