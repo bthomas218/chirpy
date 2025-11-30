@@ -10,3 +10,11 @@ export async function createRefreshToken(refreshToken: NewRefreshToken) {
     .returning();
   return result;
 }
+
+export async function getRefreshToken(refreshToken: string) {
+  const [result] = await db
+    .select()
+    .from(refreshTokens)
+    .where(eq(refreshTokens.token, refreshToken));
+  return result;
+}

@@ -1,9 +1,9 @@
 //TODO: make auth services
 import { NotFoundError, UnauthorizedError } from "../utils/errorClasses.js";
 import { getUserByEmail } from "../db/queries/users.js";
-import { makeJWT, makeRefreshToken, verifyPassword } from "../utils/auth.js";
+import { makeJWT, makeRefreshToken, verifyPassword, } from "../utils/auth.js";
 import config from "../config.js";
-import { createRefreshToken } from "../db/queries/refreshTokens.js";
+import { createRefreshToken, getRefreshToken, } from "../db/queries/refreshTokens.js";
 const ONE_HOUR = 3600; // In seconds
 const SIXTY_DAYS = 1000 * 60 * 60 * 24 * 60; // In miliseconds
 /**
@@ -28,4 +28,17 @@ export async function loginUser(email, password) {
     });
     const userResponse = user;
     return { user: userResponse, token, refreshToken };
+}
+/**
+ * Uses a refresh token to get a new acess token
+ * @param token possibly valid refresh token
+ * @returns a new JWT that expires in one hour
+ */
+export async function getAcessToken(token) {
+    const refreshToken = await getRefreshToken(token);
+    if (!refreshToken)
+        throw new UnauthorizedError("Unauthorized");
+    if (refreshToken.revokedAt || refreshToken.expiresAt < new Date())
+        throw new UnauthorizedError("Unathorized");
+    return makeJWT(refreshToken.userId, ONE_HOUR, config.jwtSecret);
 }

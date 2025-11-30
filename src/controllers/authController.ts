@@ -15,3 +15,8 @@ export async function loginUser(
 
   res.status(200).json({ user, token, refreshToken });
 }
+
+export async function refreshUser(req: Request, res: Response) {
+  const token = await authService.getAcessToken(req.token as string);
+  res.status(200).json({ token: token });
+}

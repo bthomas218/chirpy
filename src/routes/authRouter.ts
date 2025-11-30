@@ -12,7 +12,8 @@ import {
 import config from "../config.js";
 import { db } from "../db/index.js";
 import { eq } from "drizzle-orm";
-import { loginUser } from "../controllers/authController.js";
+import { loginUser, refreshUser } from "../controllers/authController.js";
+import extractTokenMiddleware from "../middleware/token.js";
 
 const authRouter = express.Router();
 type UserResponse = Omit<User, "password"> & {
@@ -22,22 +23,7 @@ type UserResponse = Omit<User, "password"> & {
 
 authRouter.post("/login", loginUser);
 
-authRouter.post("/refresh", async (req: Request, res: Response) => {
-  const refreshToken = getBearerToken(req);
-  const [result] = await db
-    .select()
-    .from(refreshTokens)
-    .where(eq(refreshTokens.token, refreshToken));
-
-  if (result) {
-    if (!result.revokedAt && result.expiresAt > new Date(Date.now())) {
-      const token = makeJWT(result.userId, 3600, config.jwtSecret);
-      res.status(200).json({ token: token });
-      return;
-    }
-  }
-  throw new UnauthorizedError("Unauthorized");
-});
+authRouter.post("/refresh", extractTokenMiddleware, refreshUser);
 
 authRouter.post("/revoke", async (req: Request, res: Response) => {
   const refreshToken = getBearerToken(req);
