@@ -1,10 +1,6 @@
 import express from "express";
 import type { Request, Response } from "express";
-import {
-  BadRequestError,
-  NotFoundError,
-  UnauthorizedError,
-} from "../utils/errorClasses.js";
+import { BadRequestError, NotFoundError } from "../utils/errorClasses.js";
 import { db } from "../db/index.js";
 import { users, posts, refreshTokens } from "../db/schema.js";
 import type { User, RefreshToken } from "../db/schema.js";
@@ -63,64 +59,6 @@ router.post(
     res.status(201).json(result[0] as UserResponse);
   }
 );
-
-router.post(
-  "/login",
-  async (
-    req: Request<{}, {}, { email: string; password: string }>,
-    res: Response
-  ) => {
-    const result = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, req.body.email));
-
-    const user = result[0] as UserResponse;
-    if (user) {
-      if (await verifyPassword(req.body.password, result[0].password)) {
-        user.token = makeJWT(user.id, 3600, config.jwtSecret);
-        user.refreshToken = makeRefreshToken();
-        await db.insert(refreshTokens).values({
-          userId: user.id,
-          token: user.refreshToken,
-          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60), // Expires in 60 days
-        });
-
-        res.status(200).json(user);
-      } else {
-        throw new UnauthorizedError("Invalid Username or Password");
-      }
-    } else {
-      throw new NotFoundError("User not found");
-    }
-  }
-);
-
-router.post("/refresh", async (req: Request, res: Response) => {
-  const refreshToken = getBearerToken(req);
-  const [result] = await db
-    .select()
-    .from(refreshTokens)
-    .where(eq(refreshTokens.token, refreshToken));
-
-  if (result) {
-    if (!result.revokedAt && result.expiresAt > new Date(Date.now())) {
-      const token = makeJWT(result.userId, 3600, config.jwtSecret);
-      res.status(200).json({ token: token });
-      return;
-    }
-  }
-  throw new UnauthorizedError("Unauthorized");
-});
-
-router.post("/revoke", async (req: Request, res: Response) => {
-  const refreshToken = getBearerToken(req);
-  await db
-    .update(refreshTokens)
-    .set({ revokedAt: new Date() })
-    .where(eq(refreshTokens.token, refreshToken));
-  res.status(204).send();
-});
 
 router.post(
   "/chirps",
