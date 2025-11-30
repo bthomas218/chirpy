@@ -18,3 +18,11 @@ export async function getRefreshToken(refreshToken: string) {
     .where(eq(refreshTokens.token, refreshToken));
   return result;
 }
+
+export async function revokeTokenInDb(refreshToken: string) {
+  const [result] = await db
+    .update(refreshTokens)
+    .set({ revokedAt: new Date() })
+    .where(eq(refreshTokens.token, refreshToken));
+  return result;
+}

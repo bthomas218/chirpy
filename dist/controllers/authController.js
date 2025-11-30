@@ -8,3 +8,7 @@ export async function refreshUser(req, res) {
     const token = await authService.getAcessToken(req.token);
     res.status(200).json({ token: token });
 }
+export async function revokeToken(req, res) {
+    await authService.revokeUserToken(req.token);
+    res.status(204).send();
+}

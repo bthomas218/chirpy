@@ -1,16 +1,11 @@
-//TODO: make auth services
 import { NotFoundError, UnauthorizedError } from "../utils/errorClasses.js";
 import { getUserByEmail } from "../db/queries/users.js";
-import {
-  makeJWT,
-  makeRefreshToken,
-  verifyPassword,
-  getBearerToken,
-} from "../utils/auth.js";
+import { makeJWT, makeRefreshToken, verifyPassword } from "../utils/auth.js";
 import config from "../config.js";
 import {
   createRefreshToken,
   getRefreshToken,
+  revokeTokenInDb,
 } from "../db/queries/refreshTokens.js";
 import { User } from "../db/schema.js";
 
@@ -56,4 +51,8 @@ export async function getAcessToken(token: string) {
   if (refreshToken.revokedAt || refreshToken.expiresAt < new Date())
     throw new UnauthorizedError("Unathorized");
   return makeJWT(refreshToken.userId, ONE_HOUR, config.jwtSecret);
+}
+
+export async function revokeUserToken(token: string) {
+  await revokeTokenInDb(token);
 }

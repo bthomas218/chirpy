@@ -3,7 +3,7 @@ import { NotFoundError, UnauthorizedError } from "../utils/errorClasses.js";
 import { getUserByEmail } from "../db/queries/users.js";
 import { makeJWT, makeRefreshToken, verifyPassword, } from "../utils/auth.js";
 import config from "../config.js";
-import { createRefreshToken, getRefreshToken, } from "../db/queries/refreshTokens.js";
+import { createRefreshToken, getRefreshToken, revokeTokenInDb, } from "../db/queries/refreshTokens.js";
 const ONE_HOUR = 3600; // In seconds
 const SIXTY_DAYS = 1000 * 60 * 60 * 24 * 60; // In miliseconds
 /**
@@ -41,4 +41,7 @@ export async function getAcessToken(token) {
     if (refreshToken.revokedAt || refreshToken.expiresAt < new Date())
         throw new UnauthorizedError("Unathorized");
     return makeJWT(refreshToken.userId, ONE_HOUR, config.jwtSecret);
+}
+export async function revokeUserToken(token) {
+    await revokeTokenInDb(token);
 }
