@@ -1,6 +1,7 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../utils/errorClasses.js";
+import crypto from "node:crypto";
 export async function hashPassword(password) {
     return await argon2.hash(password);
 }
@@ -44,4 +45,7 @@ export function getBearerToken(req) {
         throw new UnauthorizedError("Unauthorized");
     }
     return bearerToken.replace("Bearer", "").trim();
+}
+export function makeRefreshToken() {
+    return crypto.randomBytes(32).toString("hex");
 }

@@ -1,9 +1,9 @@
 import express from "express";
 import { BadRequestError, NotFoundError, UnauthorizedError, } from "../utils/errorClasses.js";
 import { db } from "../db/index.js";
-import { users, posts } from "../db/schema.js";
+import { users, posts, refreshTokens } from "../db/schema.js";
 import { eq } from "drizzle-orm";
-import { hashPassword, verifyPassword, makeJWT, getBearerToken, validateJWT, } from "../services/auth.js";
+import { hashPassword, verifyPassword, makeJWT, getBearerToken, validateJWT, makeRefreshToken, } from "../services/auth.js";
 import config from "../config.js";
 const router = express.Router();
 const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];
@@ -42,11 +42,16 @@ router.post("/login", async (req, res) => {
         .select()
         .from(users)
         .where(eq(users.email, req.body.email));
-    if (result.length > 0) {
+    const user = result[0];
+    if (user) {
         if (await verifyPassword(req.body.password, result[0].password)) {
-            const token = makeJWT(result[0].id, req.body.expiresInSeconds ?? 3600, config.jwtSecret);
-            const user = result[0];
-            user.token = token;
+            user.token = makeJWT(user.id, 3600, config.jwtSecret);
+            user.refreshToken = makeRefreshToken();
+            await db.insert(refreshTokens).values({
+                userId: user.id,
+                token: user.refreshToken,
+                expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60), // Expires in 60 days
+            });
             res.status(200).json(user);
         }
         else {
@@ -56,6 +61,29 @@ router.post("/login", async (req, res) => {
     else {
         throw new NotFoundError("User not found");
     }
+});
+router.post("/refresh", async (req, res) => {
+    const refreshToken = getBearerToken(req);
+    const [result] = await db
+        .select()
+        .from(refreshTokens)
+        .where(eq(refreshTokens.token, refreshToken));
+    if (result) {
+        if (!result.revokedAt && result.expiresAt > new Date(Date.now())) {
+            const token = makeJWT(result.userId, 3600, config.jwtSecret);
+            res.status(200).json({ token: token });
+            return;
+        }
+    }
+    throw new UnauthorizedError("Unauthorized");
+});
+router.post("/revoke", async (req, res) => {
+    const refreshToken = getBearerToken(req);
+    await db
+        .update(refreshTokens)
+        .set({ revokedAt: new Date() })
+        .where(eq(refreshTokens.token, refreshToken));
+    res.status(204).send();
 });
 router.post("/chirps", async (req, res) => {
     const token = getBearerToken(req);
