@@ -12,7 +12,7 @@ import {
   getBearerToken,
   validateJWT,
   makeRefreshToken,
-} from "../services/auth.js";
+} from "../utils/auth.js";
 import config from "../config.js";
 
 const router = express.Router();

@@ -3,7 +3,7 @@ import { BadRequestError, NotFoundError } from "../utils/errorClasses.js";
 import { db } from "../db/index.js";
 import { users, posts } from "../db/schema.js";
 import { eq } from "drizzle-orm";
-import { hashPassword, getBearerToken, validateJWT, } from "../services/auth.js";
+import { hashPassword, getBearerToken, validateJWT, } from "../utils/auth.js";
 import config from "../config.js";
 const router = express.Router();
 const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];

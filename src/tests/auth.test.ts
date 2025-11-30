@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import jwt from "jsonwebtoken";
 import type { Request } from "express";
-import { makeJWT, validateJWT, getBearerToken } from "../services/auth.js";
+import { makeJWT, validateJWT, getBearerToken } from "../utils/auth.js";
 import { UnauthorizedError } from "../utils/errorClasses.js";
 
 describe("JWT Authentication", () => {

@@ -8,7 +8,7 @@ import {
   verifyPassword,
   makeRefreshToken,
   getBearerToken,
-} from "../services/auth.js";
+} from "../utils/auth.js";
 import config from "../config.js";
 import { db } from "../db/index.js";
 import { eq } from "drizzle-orm";

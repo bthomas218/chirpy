@@ -1,7 +1,7 @@
 import express from "express";
 import { UnauthorizedError } from "../utils/errorClasses.js";
 import { refreshTokens } from "../db/schema.js";
-import { makeJWT, getBearerToken, } from "../services/auth.js";
+import { makeJWT, getBearerToken, } from "../utils/auth.js";
 import config from "../config.js";
 import { db } from "../db/index.js";
 import { eq } from "drizzle-orm";

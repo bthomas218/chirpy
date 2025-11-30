@@ -24,6 +24,13 @@ export async function verifyPassword(
  */
 type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 
+/**
+ * Makes a JWT for a user
+ * @param userID The subject of the payload
+ * @param expiresIn Time for token to expire in SECONDS
+ * @param secret Secret signing key
+ * @returns JWT with encoded information
+ */
 export function makeJWT(
   userID: string,
   expiresIn: number,
