@@ -12,6 +12,7 @@ function envOrThrow(key) {
 const config = {
     fileserverHits: 0,
     platform: envOrThrow("PLATFORM"),
+    jwtSecret: envOrThrow("JWT_SECRET"),
     db: {
         url: envOrThrow("DB_URL"),
         migrationConfig: migrationConfig,

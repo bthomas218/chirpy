@@ -9,11 +9,18 @@ import { db } from "../db/index.js";
 import { users, posts } from "../db/schema.js";
 import type { NewUser } from "../db/schema.js";
 import { eq } from "drizzle-orm";
-import { hashPassword, verifyPassword } from "../services/auth.js";
+import {
+  hashPassword,
+  verifyPassword,
+  makeJWT,
+  getBearerToken,
+  validateJWT,
+} from "../services/auth.js";
+import config from "../config.js";
 
 const router = express.Router();
 const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];
-type UserResponse = Omit<NewUser, "password">;
+type UserResponse = Omit<NewUser, "password"> & { token?: string };
 
 router.get("/healthz", async (req: Request, res: Response) => {
   res.set("Content-Type", "text/plain; charset=utf-8").send("OK");
@@ -56,7 +63,11 @@ router.post(
 router.post(
   "/login",
   async (
-    req: Request<{}, {}, { email: string; password: string }>,
+    req: Request<
+      {},
+      {},
+      { email: string; password: string; expiresInSeconds?: number }
+    >,
     res: Response
   ) => {
     const result = await db
@@ -65,7 +76,14 @@ router.post(
       .where(eq(users.email, req.body.email));
     if (result.length > 0) {
       if (await verifyPassword(req.body.password, result[0].password)) {
-        res.status(200).json(result[0] as UserResponse);
+        const token = makeJWT(
+          result[0].id,
+          req.body.expiresInSeconds ?? 3600,
+          config.jwtSecret
+        );
+        const user = result[0] as UserResponse;
+        user.token = token;
+        res.status(200).json(user);
       } else {
         throw new UnauthorizedError("Invalid Username or Password");
       }
@@ -81,10 +99,12 @@ router.post(
     req: Request<{}, {}, { body: string; userId: string }>,
     res: Response
   ) => {
+    const token = getBearerToken(req);
+    const userID = validateJWT(token, config.jwtSecret);
     const cleanedBody = await validatechirp(req.body.body);
     const result = await db
       .insert(posts)
-      .values({ body: cleanedBody, userId: req.body.userId })
+      .values({ body: cleanedBody, userId: userID })
       .returning();
     res.status(201).json(result[0]);
   }

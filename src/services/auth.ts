@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import type { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../utils/errorClasses.js";
+import type { Request } from "express";
 
 export async function hashPassword(password: string): Promise<string> {
   return await argon2.hash(password);
@@ -53,4 +54,17 @@ export function validateJWT(tokenString: string, secret: string): string {
     throw new UnauthorizedError("Invalid issuer");
   }
   return decoded.sub;
+}
+
+/**
+ * Extracts Bearer Token from a request
+ * @param req Request object to get the token from
+ * @returns the token
+ */
+export function getBearerToken(req: Request): string {
+  const bearerToken = req.get("Authorization");
+  if (!bearerToken) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+  return bearerToken.replace("Bearer", "").trim();
 }
