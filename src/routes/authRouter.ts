@@ -12,6 +12,7 @@ import {
 import config from "../config.js";
 import { db } from "../db/index.js";
 import { eq } from "drizzle-orm";
+import { loginUser } from "../controllers/authController.js";
 
 const authRouter = express.Router();
 type UserResponse = Omit<User, "password"> & {
@@ -19,37 +20,7 @@ type UserResponse = Omit<User, "password"> & {
   refreshToken?: string;
 };
 
-authRouter.post(
-  "/login",
-  async (
-    req: Request<{}, {}, { email: string; password: string }>,
-    res: Response
-  ) => {
-    const result = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, req.body.email));
-
-    const user = result[0] as UserResponse;
-    if (user) {
-      if (await verifyPassword(req.body.password, result[0].password)) {
-        user.token = makeJWT(user.id, 3600, config.jwtSecret);
-        user.refreshToken = makeRefreshToken();
-        await db.insert(refreshTokens).values({
-          userId: user.id,
-          token: user.refreshToken,
-          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60), // Expires in 60 days
-        });
-
-        res.status(200).json(user);
-      } else {
-        throw new UnauthorizedError("Invalid Username or Password");
-      }
-    } else {
-      throw new NotFoundError("User not found");
-    }
-  }
-);
+authRouter.post("/login", loginUser);
 
 authRouter.post("/refresh", async (req: Request, res: Response) => {
   const refreshToken = getBearerToken(req);
