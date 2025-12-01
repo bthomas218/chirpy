@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
+import config from "../config.js";
 import * as userService from "../services/userService.js";
+import { UnauthorizedError } from "../utils/errorClasses.js";
 
 export async function registerUser(
   req: Request<{}, {}, { email: string; password: string }>,
@@ -26,6 +28,7 @@ export async function upgradeUser(
   req: Request<{}, {}, { event: string; data: { userId: string } }>,
   res: Response
 ) {
+  if (req.auth !== config.polkaKey) throw new UnauthorizedError("Unauthorized");
   const { event, data } = req.body;
   if (event !== "user.upgraded") {
     res.status(204).send();

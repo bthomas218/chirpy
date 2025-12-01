@@ -2,7 +2,6 @@ import argon2 from "argon2";
 import type { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../utils/errorClasses.js";
-import type { Request } from "express";
 import crypto from "node:crypto";
 
 export async function hashPassword(password: string): Promise<string> {

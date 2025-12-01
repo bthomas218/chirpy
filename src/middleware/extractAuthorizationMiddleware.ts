@@ -15,7 +15,8 @@ const extractAuthorizationMiddleware = (
   const authHeader = req.get("Authorization");
   if (!authHeader) throw new UnauthorizedError("Unauthorized");
 
-  req.auth = authHeader.replace("Bearer", "").trim();
+  req.auth = authHeader.replace(/Bearer|ApiKey/, "").trim();
+  console.log(req.auth);
   next();
 };
 
