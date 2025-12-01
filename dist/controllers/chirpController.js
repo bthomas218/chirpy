@@ -9,4 +9,8 @@ export async function listChirps(req, res) {
     const chirps = await chirpService.listAllChirps();
     res.status(200).json(chirps);
 }
-export async function getChirp(req, res) { }
+export async function getChirp(req, res) {
+    const { id } = req.params;
+    const chirp = await chirpService.getChirpByID(id);
+    res.status(200).send(chirp);
+}

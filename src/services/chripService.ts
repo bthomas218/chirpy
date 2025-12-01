@@ -1,6 +1,10 @@
-import { BadRequestError } from "../utils/errorClasses.js";
+import { BadRequestError, NotFoundError } from "../utils/errorClasses.js";
 import { PROFANITIES } from "../config.js";
-import { createNewPost, getAllPosts } from "../db/queries/posts.js";
+import {
+  createNewPost,
+  getAllPosts,
+  getPostById,
+} from "../db/queries/posts.js";
 
 export function validatechirp(body: string) {
   if (body.length <= 140) {
@@ -30,8 +34,20 @@ export async function postChirp(body: string, userID: string) {
 }
 
 /**
- * Returns all chirps from the database
+ * list all chirps from the database
+ * @returns an array of post objects
  */
 export async function listAllChirps() {
   return await getAllPosts();
+}
+
+/**
+ * Get a chirp by its id
+ * @param chirpID id of the chirp to get
+ * @returns a post object
+ */
+export async function getChirpByID(chirpID: string) {
+  const chirp = await getPostById(chirpID);
+  if (!chirp) throw new NotFoundError("Chirp not found");
+  return chirp;
 }

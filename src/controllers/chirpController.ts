@@ -16,4 +16,8 @@ export async function listChirps(req: Request, res: Response) {
   res.status(200).json(chirps);
 }
 
-export async function getChirp(req: Request, res: Response) {}
+export async function getChirp(req: Request<{ id: string }>, res: Response) {
+  const { id } = req.params;
+  const chirp = await chirpService.getChirpByID(id);
+  res.status(200).send(chirp);
+}

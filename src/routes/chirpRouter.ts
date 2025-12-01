@@ -18,4 +18,6 @@ chirpRouter.post(
 
 chirpRouter.get("/chirps", listChirps);
 
+chirpRouter.get("/chirps/:id", getChirp);
+
 export default chirpRouter;
