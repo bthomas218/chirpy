@@ -1,5 +1,4 @@
-import { pgTable, timestamp, varchar, uuid, text } from "drizzle-orm/pg-core";
-//TODO: add is_chirpy_red column
+import { pgTable, timestamp, varchar, uuid, text, boolean, } from "drizzle-orm/pg-core";
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -9,6 +8,7 @@ export const users = pgTable("users", {
         .$onUpdate(() => new Date()),
     email: varchar("email", { length: 256 }).unique().notNull(),
     password: varchar("password", { length: 256 }).notNull().default("unset"),
+    isChirpyRed: boolean("is_chirpy_red").default(false),
 });
 export const posts = pgTable("posts", {
     id: uuid("id").primaryKey().defaultRandom(),

@@ -11,7 +11,7 @@ export async function createUserInDb(user: NewUser) {
   return result;
 }
 
-export async function updateUserByID(userID: string, user: NewUser) {
+export async function updateUserByID(userID: string, user: Partial<NewUser>) {
   const [result] = await db
     .update(users)
     .set(user)

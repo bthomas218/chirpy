@@ -36,6 +36,13 @@
       "when": 1764468426240,
       "tag": "0004_shocking_rawhide_kid",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1764596589529,
+      "tag": "0005_zippy_the_renegades",
+      "breakpoints": true
     }
   ]
 }

@@ -30,7 +30,9 @@ export async function upgradeUser(
   if (event !== "user.upgraded") {
     res.status(204).send();
   } else {
-    //TODO: Mark users as chirpy_red members in databse
+    await userService.updateUserAccount(data.userId, {
+      isChirpyRed: true,
+    });
     res.status(204).send();
   }
 }

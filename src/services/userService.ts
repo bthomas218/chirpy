@@ -21,7 +21,10 @@ export async function createUser(email: string, password: string) {
  * @param userID The id of the user to update
  * @returns The updated user object without the password
  */
-export async function updateUserAccount(userID: string, data: NewUser) {
+export async function updateUserAccount(
+  userID: string,
+  data: Partial<NewUser>
+) {
   if (data.password) {
     data.password = await hashPassword(data.password);
   }

@@ -18,7 +18,9 @@ export async function upgradeUser(req, res) {
         res.status(204).send();
     }
     else {
-        //TODO: Mark users as chirpy_red members in databse
+        await userService.updateUserAccount(data.userId, {
+            isChirpyRed: true,
+        });
         res.status(204).send();
     }
 }
