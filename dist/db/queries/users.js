@@ -21,3 +21,4 @@ export async function getUserByEmail(email) {
     const [result] = await db.select().from(users).where(eq(users.email, email));
     return result;
 }
+//TODO: add query to mark users as chirpy red members

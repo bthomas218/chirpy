@@ -1,4 +1,5 @@
 import { pgTable, timestamp, varchar, uuid, text } from "drizzle-orm/pg-core";
+//TODO: add is_chirpy_red column
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
     createdAt: timestamp("created_at").notNull().defaultNow(),

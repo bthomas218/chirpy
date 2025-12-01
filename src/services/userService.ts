@@ -1,6 +1,8 @@
 import { hashPassword } from "../utils/auth.js";
 import { createUserInDb, updateUserByID } from "../db/queries/users.js";
 import { omit } from "../utils/typing.js";
+import { NewUser } from "src/db/schema.js";
+import { updateUser } from "src/controllers/userController.js";
 
 /**
  * Creates a new user for the database
@@ -15,21 +17,14 @@ export async function createUser(email: string, password: string) {
 }
 
 /**
- * Updates the email and password values of a user in the database
- * @param email The new email
- * @param password The new password
+ * Updates any fields of a user in the database
  * @param userID The id of the user to update
  * @returns The updated user object without the password
  */
-export async function updateUserCredentials(
-  email: string,
-  password: string,
-  userID: string
-) {
-  const passwordHash = await hashPassword(password);
-  const user = await updateUserByID(userID, {
-    email: email,
-    password: passwordHash,
-  });
+export async function updateUserAccount(userID: string, data: NewUser) {
+  if (data.password) {
+    data.password = await hashPassword(data.password);
+  }
+  const user = await updateUserByID(userID, data);
   return omit(user, ["password"]);
 }

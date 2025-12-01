@@ -13,17 +13,14 @@ export async function createUser(email, password) {
     return omit(user, ["password"]);
 }
 /**
- * Updates the email and password values of a user in the database
- * @param email The new email
- * @param password The new password
+ * Updates any fields of a user in the database
  * @param userID The id of the user to update
  * @returns The updated user object without the password
  */
-export async function updateUserCredentials(email, password, userID) {
-    const passwordHash = await hashPassword(password);
-    const user = await updateUserByID(userID, {
-        email: email,
-        password: passwordHash,
-    });
+export async function updateUserAccount(userID, data) {
+    if (data.password) {
+        data.password = await hashPassword(data.password);
+    }
+    const user = await updateUserByID(userID, data);
     return omit(user, ["password"]);
 }

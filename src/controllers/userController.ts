@@ -15,10 +15,22 @@ export async function updateUser(
   res: Response
 ) {
   const { email, password } = req.body;
-  const user = await userService.updateUserCredentials(
-    email,
-    password,
-    req.userID as string
-  );
+  const user = await userService.updateUserAccount(req.userID as string, {
+    email: email,
+    password: password,
+  });
   res.status(200).json(user);
+}
+
+export async function upgradeUser(
+  req: Request<{}, {}, { event: string; data: { userId: string } }>,
+  res: Response
+) {
+  const { event, data } = req.body;
+  if (event !== "user.upgraded") {
+    res.status(204).send();
+  } else {
+    //TODO: Mark users as chirpy_red members in databse
+    res.status(204).send();
+  }
 }
