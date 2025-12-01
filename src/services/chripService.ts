@@ -1,7 +1,12 @@
-import { BadRequestError, NotFoundError } from "../utils/errorClasses.js";
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from "../utils/errorClasses.js";
 import { PROFANITIES } from "../config.js";
 import {
   createNewPost,
+  deletePostbyID,
   getAllPosts,
   getPostById,
 } from "../db/queries/posts.js";
@@ -50,4 +55,14 @@ export async function getChirpByID(chirpID: string) {
   const chirp = await getPostById(chirpID);
   if (!chirp) throw new NotFoundError("Chirp not found");
   return chirp;
+}
+
+/**
+ * Deletes chirp in the db if it exists and the user is the author of the chirp
+ */
+export async function unpostChirp(chirpID: string, userID: string) {
+  const chirp = await getChirpByID(chirpID);
+  const authorID = chirp.userId;
+  if (authorID !== userID) throw new ForbiddenError("Forbidden");
+  await deletePostbyID(chirp.id);
 }

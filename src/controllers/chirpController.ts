@@ -21,3 +21,9 @@ export async function getChirp(req: Request<{ id: string }>, res: Response) {
   const chirp = await chirpService.getChirpByID(id);
   res.status(200).send(chirp);
 }
+
+export async function deleteChirp(req: Request<{ id: string }>, res: Response) {
+  const { id } = req.params;
+  await chirpService.unpostChirp(id, req.userID as string);
+  res.status(204).send();
+}

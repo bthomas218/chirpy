@@ -14,3 +14,8 @@ export async function getChirp(req, res) {
     const chirp = await chirpService.getChirpByID(id);
     res.status(200).send(chirp);
 }
+export async function deleteChirp(req, res) {
+    const { id } = req.params;
+    await chirpService.unpostChirp(id, req.userID);
+    res.status(204).send();
+}
