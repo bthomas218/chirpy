@@ -10,6 +10,8 @@ apiRouter.get("/healthz", async (req: Request, res: Response) => {
   res.type("text/plain; charset=utf-8").send("OK");
 });
 
-apiRouter.use(chirpRouter, userRouter, authRouter);
+apiRouter.use("/chirps", chirpRouter);
+apiRouter.use("/users", userRouter);
+apiRouter.use(authRouter);
 
 export default apiRouter;

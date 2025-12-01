@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
 import { APIError } from "../utils/errorClasses.js";
-import e from "express";
 
 const errorHandlingMiddleware = (
   err: APIError,

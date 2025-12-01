@@ -9,15 +9,10 @@ import extractUserMiddleware from "../middleware/extractUserMiddleware.js";
 
 const chirpRouter = express.Router();
 
-chirpRouter.post(
-  "/chirps",
-  extractTokenMiddleware,
-  extractUserMiddleware,
-  postChirp
-);
+chirpRouter.post("/", extractTokenMiddleware, extractUserMiddleware, postChirp);
 
-chirpRouter.get("/chirps", listChirps);
+chirpRouter.get("/", listChirps);
 
-chirpRouter.get("/chirps/:id", getChirp);
+chirpRouter.get("/:id", getChirp);
 
 export default chirpRouter;
