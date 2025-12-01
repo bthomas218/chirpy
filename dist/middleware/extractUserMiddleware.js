@@ -7,7 +7,7 @@ import config from "../config.js";
  * @param next The nextfunction
  */
 const extractUserMiddleware = (req, res, next) => {
-    const userID = validateJWT(req.token, config.jwtSecret);
+    const userID = validateJWT(req.auth, config.jwtSecret);
     req.userID = userID;
     next();
 };

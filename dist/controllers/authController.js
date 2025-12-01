@@ -5,10 +5,10 @@ export async function loginUser(req, res) {
     res.status(200).json(user);
 }
 export async function refreshUser(req, res) {
-    const token = await authService.getAcessToken(req.token);
+    const token = await authService.getAcessToken(req.auth);
     res.status(200).json({ token: token });
 }
 export async function revokeToken(req, res) {
-    await authService.revokeUserToken(req.token);
+    await authService.revokeUserToken(req.auth);
     res.status(204).send();
 }

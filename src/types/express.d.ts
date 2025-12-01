@@ -2,7 +2,7 @@ import "express";
 
 declare module "express-serve-static-core" {
   interface Request {
-    token?: string;
+    auth?: string;
     userID?: string;
   }
 }

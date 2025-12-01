@@ -13,11 +13,11 @@ export async function loginUser(
 }
 
 export async function refreshUser(req: Request, res: Response) {
-  const token = await authService.getAcessToken(req.token as string);
+  const token = await authService.getAcessToken(req.auth as string);
   res.status(200).json({ token: token });
 }
 
 export async function revokeToken(req: Request, res: Response) {
-  await authService.revokeUserToken(req.token as string);
+  await authService.revokeUserToken(req.auth as string);
   res.status(204).send();
 }

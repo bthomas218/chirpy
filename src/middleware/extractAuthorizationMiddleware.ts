@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { UnauthorizedError } from "../utils/errorClasses.js";
 
 /**
- * Extracts bearer token from authorization header
+ * Extracts info like tokens and api keys from authorization header
  * @param req The request object now with the token attached
  * @param res The response object
  * @param next The next function
  */
-const extractTokenMiddleware = (
+const extractAuthorizationMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -15,8 +15,8 @@ const extractTokenMiddleware = (
   const authHeader = req.get("Authorization");
   if (!authHeader) throw new UnauthorizedError("Unauthorized");
 
-  req.token = authHeader.replace("Bearer", "").trim();
+  req.auth = authHeader.replace("Bearer", "").trim();
   next();
 };
 
-export default extractTokenMiddleware;
+export default extractAuthorizationMiddleware;

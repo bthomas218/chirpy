@@ -1,8 +1,8 @@
 import express from "express";
 import { loginUser, refreshUser, revokeToken, } from "../controllers/authController.js";
-import extractTokenMiddleware from "../middleware/token.js";
+import extractAuthorizationMiddleware from "../middleware/extractAuthorizationMiddleware.js";
 const authRouter = express.Router();
 authRouter.post("/login", loginUser);
-authRouter.post("/refresh", extractTokenMiddleware, refreshUser);
-authRouter.post("/revoke", extractTokenMiddleware, revokeToken);
+authRouter.post("/refresh", extractAuthorizationMiddleware, refreshUser);
+authRouter.post("/revoke", extractAuthorizationMiddleware, revokeToken);
 export default authRouter;

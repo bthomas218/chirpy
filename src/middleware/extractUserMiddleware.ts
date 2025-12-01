@@ -13,7 +13,7 @@ const extractUserMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const userID = validateJWT(req.token as string, config.jwtSecret);
+  const userID = validateJWT(req.auth as string, config.jwtSecret);
   req.userID = userID;
   next();
 };

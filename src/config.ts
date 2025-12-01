@@ -13,6 +13,7 @@ type APIConfig = {
   platform: string;
   jwtSecret: string;
   db: DBconfig;
+  polkaKey: string;
 };
 
 type DBconfig = {
@@ -32,6 +33,7 @@ const config: APIConfig = {
   fileserverHits: 0,
   platform: envOrThrow("PLATFORM"),
   jwtSecret: envOrThrow("JWT_SECRET"),
+  polkaKey: envOrThrow("POLKA_KEY"),
   db: {
     url: envOrThrow("DB_URL"),
     migrationConfig: migrationConfig,
