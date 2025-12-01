@@ -17,6 +17,10 @@ export async function getPostById(postID) {
     const [result] = await db.select().from(posts).where(eq(posts.id, postID));
     return result;
 }
+export async function getPostsByUserID(userID) {
+    const result = await db.select().from(posts).where(eq(posts.userId, userID));
+    return result;
+}
 export async function deletePostbyID(postID) {
     const [result] = await db
         .delete(posts)

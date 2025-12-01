@@ -9,6 +9,7 @@ import {
   deletePostbyID,
   getAllPosts,
   getPostById,
+  getPostsByUserID,
 } from "../db/queries/posts.js";
 
 export function validatechirp(body: string) {
@@ -44,6 +45,15 @@ export async function postChirp(body: string, userID: string) {
  */
 export async function listAllChirps() {
   return await getAllPosts();
+}
+
+/**
+ * list all chirps by a certain user from the database
+ * @param authorID The id of the user
+ * @returns an array of post objects
+ */
+export async function listAllChirpsByAuthor(authorID: string) {
+  return await getPostsByUserID(authorID);
 }
 
 /**

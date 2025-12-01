@@ -1,6 +1,6 @@
 import { BadRequestError, ForbiddenError, NotFoundError, } from "../utils/errorClasses.js";
 import { PROFANITIES } from "../config.js";
-import { createNewPost, deletePostbyID, getAllPosts, getPostById, } from "../db/queries/posts.js";
+import { createNewPost, deletePostbyID, getAllPosts, getPostById, getPostsByUserID, } from "../db/queries/posts.js";
 export function validatechirp(body) {
     if (body.length <= 140) {
         const cleanedBody = body
@@ -33,6 +33,14 @@ export async function postChirp(body, userID) {
  */
 export async function listAllChirps() {
     return await getAllPosts();
+}
+/**
+ * list all chirps by a certain user from the database
+ * @param authorID The id of the user
+ * @returns an array of post objects
+ */
+export async function listAllChirpsByAuthor(authorID) {
+    return await getPostsByUserID(authorID);
 }
 /**
  * Get a chirp by its id

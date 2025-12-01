@@ -11,8 +11,17 @@ export async function postChirp(
   res.status(201).json(chirp);
 }
 
-export async function listChirps(req: Request, res: Response) {
-  const chirps = await chirpService.listAllChirps();
+export async function listChirps(
+  req: Request<{ authorId: string }>,
+  res: Response
+) {
+  const { authorId } = req.query;
+  let chirps;
+  if (typeof authorId === "string") {
+    chirps = await chirpService.listAllChirpsByAuthor(authorId);
+  } else {
+    chirps = await chirpService.listAllChirps();
+  }
   res.status(200).json(chirps);
 }
 
