@@ -11,6 +11,9 @@ export async function postChirp(
   res.status(201).json(chirp);
 }
 
-export async function listChirps(req: Request, res: Response) {}
+export async function listChirps(req: Request, res: Response) {
+  const chirps = await chirpService.listAllChirps();
+  res.status(200).json(chirps);
+}
 
 export async function getChirp(req: Request, res: Response) {}

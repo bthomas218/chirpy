@@ -11,7 +11,7 @@ export async function createNewPost(post: NewPost) {
   return result;
 }
 
-export async function getPosts() {
+export async function getAllPosts() {
   const result = await db.select().from(posts).orderBy(asc(posts.createdAt));
   return result;
 }

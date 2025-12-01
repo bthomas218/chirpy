@@ -3,7 +3,7 @@ import { UnauthorizedError } from "../utils/errorClasses.js";
 
 /**
  * Extracts bearer token from authorization header
- * @param req The request object
+ * @param req The request object now with the token attached
  * @param res The response object
  * @param next The next function
  */

@@ -7,12 +7,6 @@ const router = express.Router();
 router.get("/healthz", async (req, res) => {
     res.set("Content-Type", "text/plain; charset=utf-8").send("OK");
 });
-router.get("/chirps", async (req, res) => {
-    const result = await db.query.posts.findMany({
-        orderBy: (posts, { asc }) => [asc(posts.createdAt)],
-    });
-    res.json(result);
-});
 router.get("/chirps/:id", async (req, res) => {
     const result = await db
         .select()

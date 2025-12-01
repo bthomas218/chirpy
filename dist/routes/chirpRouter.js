@@ -1,7 +1,8 @@
 import express from "express";
-import { postChirp, } from "../controllers/chirpController.js";
+import { postChirp, listChirps, } from "../controllers/chirpController.js";
 import extractTokenMiddleware from "../middleware/token.js";
 import extractUserMiddleware from "../middleware/extractUserMiddleware.js";
 const chirpRouter = express.Router();
 chirpRouter.post("/chirps", extractTokenMiddleware, extractUserMiddleware, postChirp);
+chirpRouter.get("/chirps", listChirps);
 export default chirpRouter;

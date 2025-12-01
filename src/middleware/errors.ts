@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { APIError } from "../utils/errorClasses.js";
+import e from "express";
 
 const errorHandlingMiddleware = (
   err: APIError,
@@ -7,12 +8,12 @@ const errorHandlingMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  if (err.statusCode === 500) {
+  const statusCode = err.statusCode ?? 500;
+  if (statusCode === 500) {
     console.error(err.message);
   }
-  res.status(err.statusCode).json({
-    error:
-      err.statusCode === 500 ? "Something went wrong on our end" : err.message,
+  res.status(statusCode).json({
+    error: statusCode === 500 ? "Something went wrong on our end" : err.message,
   });
 };
 

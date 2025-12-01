@@ -5,5 +5,8 @@ export async function postChirp(req, res) {
     const chirp = await chirpService.postChirp(cleanedBody, req.userID);
     res.status(201).json(chirp);
 }
-export async function listChirps(req, res) { }
+export async function listChirps(req, res) {
+    const chirps = await chirpService.listAllChirps();
+    res.status(200).json(chirps);
+}
 export async function getChirp(req, res) { }

@@ -1,6 +1,6 @@
 import { BadRequestError } from "../utils/errorClasses.js";
 import { PROFANITIES } from "../config.js";
-import { createNewPost } from "../db/queries/posts.js";
+import { createNewPost, getAllPosts } from "../db/queries/posts.js";
 export function validatechirp(body) {
     if (body.length <= 140) {
         const cleanedBody = body
@@ -26,4 +26,10 @@ export function validatechirp(body) {
  */
 export async function postChirp(body, userID) {
     return await createNewPost({ body: body, userId: userID });
+}
+/**
+ * Returns all chirps from the database
+ */
+export async function listAllChirps() {
+    return await getAllPosts();
 }
