@@ -1,10 +1,15 @@
 import express from "express";
 import type { Request, Response } from "express";
+import chirpRouter from "./chirpRouter.js";
+import userRouter from "./userRouter.js";
+import authRouter from "./authRouter.js";
 
-const router = express.Router();
+const apiRouter = express.Router();
 
-router.get("/healthz", async (req: Request, res: Response) => {
-  res.set("Content-Type", "text/plain; charset=utf-8").send("OK");
+apiRouter.get("/healthz", async (req: Request, res: Response) => {
+  res.type("text/plain; charset=utf-8").send("OK");
 });
 
-export default router;
+apiRouter.use(chirpRouter, userRouter, authRouter);
+
+export default apiRouter;
