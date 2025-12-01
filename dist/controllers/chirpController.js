@@ -6,7 +6,9 @@ export async function postChirp(req, res) {
     res.status(201).json(chirp);
 }
 export async function listChirps(req, res) {
-    const { authorId } = req.query;
+    let { authorId } = req.query;
+    const sortQuery = req.query.sort;
+    let sort;
     let chirps;
     if (typeof authorId === "string") {
         chirps = await chirpService.listAllChirpsByAuthor(authorId);
@@ -14,6 +16,19 @@ export async function listChirps(req, res) {
     else {
         chirps = await chirpService.listAllChirps();
     }
+    if (typeof sortQuery === "string") {
+        switch (sortQuery) {
+            case "asc":
+                sort = sortQuery;
+                break;
+            case "desc":
+                sort = sortQuery;
+                break;
+            default:
+                break;
+        }
+    }
+    chirps = chirpService.sortChirps(sort, chirps);
     res.status(200).json(chirps);
 }
 export async function getChirp(req, res) {

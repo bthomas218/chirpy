@@ -11,6 +11,7 @@ import {
   getPostById,
   getPostsByUserID,
 } from "../db/queries/posts.js";
+import { Post } from "../db/schema.js";
 
 export function validatechirp(body: string) {
   if (body.length <= 140) {
@@ -75,4 +76,24 @@ export async function unpostChirp(chirpID: string, userID: string) {
   const authorID = chirp.userId;
   if (authorID !== userID) throw new ForbiddenError("Forbidden");
   await deletePostbyID(chirp.id);
+}
+
+/**
+ * Sorts an array of post objects by their createdAt field
+ * @param sort the order to sort in, defaults to ascending
+ * @returns the sorted chirps
+ */
+export function sortChirps(sort: "asc" | "desc" = "asc", chirps: Post[]) {
+  let compareFn: (a: Post, b: Post) => number;
+  switch (sort) {
+    case "asc":
+      compareFn = (a: Post, b: Post) =>
+        a.createdAt.getTime() - b.createdAt.getTime();
+      break;
+    case "desc":
+      compareFn = (a: Post, b: Post) =>
+        b.createdAt.getTime() - a.createdAt.getTime();
+      break;
+  }
+  return chirps.toSorted(compareFn);
 }

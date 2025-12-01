@@ -12,16 +12,31 @@ export async function postChirp(
 }
 
 export async function listChirps(
-  req: Request<{ authorId: string }>,
+  req: Request<{ authorId: string; sort: string }>,
   res: Response
 ) {
-  const { authorId } = req.query;
+  let { authorId } = req.query;
+  const sortQuery = req.query.sort;
+  let sort: "asc" | "desc" | undefined;
   let chirps;
   if (typeof authorId === "string") {
     chirps = await chirpService.listAllChirpsByAuthor(authorId);
   } else {
     chirps = await chirpService.listAllChirps();
   }
+  if (typeof sortQuery === "string") {
+    switch (sortQuery) {
+      case "asc":
+        sort = sortQuery;
+        break;
+      case "desc":
+        sort = sortQuery;
+        break;
+      default:
+        break;
+    }
+  }
+  chirps = chirpService.sortChirps(sort, chirps);
   res.status(200).json(chirps);
 }
 

@@ -63,3 +63,20 @@ export async function unpostChirp(chirpID, userID) {
         throw new ForbiddenError("Forbidden");
     await deletePostbyID(chirp.id);
 }
+/**
+ * Sorts an array of post objects by their createdAt field
+ * @param sort the order to sort in, defaults to ascending
+ * @returns the sorted chirps
+ */
+export function sortChirps(sort = "asc", chirps) {
+    let compareFn;
+    switch (sort) {
+        case "asc":
+            compareFn = (a, b) => a.createdAt.getTime() - b.createdAt.getTime();
+            break;
+        case "desc":
+            compareFn = (a, b) => b.createdAt.getTime() - a.createdAt.getTime();
+            break;
+    }
+    return chirps.toSorted(compareFn);
+}
