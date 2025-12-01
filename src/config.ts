@@ -6,6 +6,8 @@ const migrationConfig: MigrationConfig = {
 
 process.loadEnvFile();
 
+export const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];
+
 type APIConfig = {
   fileserverHits: number;
   platform: string;

@@ -1,4 +1,10 @@
 import { UnauthorizedError } from "../utils/errorClasses.js";
+/**
+ * Extracts bearer token from authorization header
+ * @param req The request object
+ * @param res The response object
+ * @param next The next function
+ */
 const extractTokenMiddleware = (req, res, next) => {
     const authHeader = req.get("Authorization");
     if (!authHeader)

@@ -3,5 +3,6 @@ import "express";
 declare module "express-serve-static-core" {
   interface Request {
     token?: string;
+    userID?: string;
   }
 }

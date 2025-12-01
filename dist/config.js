@@ -2,6 +2,7 @@ const migrationConfig = {
     migrationsFolder: "./src/db/migrations",
 };
 process.loadEnvFile();
+export const PROFANITIES = ["kerfuffle", "sharbert", "fornax"];
 function envOrThrow(key) {
     const value = process.env[key];
     if (!value) {

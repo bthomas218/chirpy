@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import jwt from "jsonwebtoken";
-import { makeJWT, validateJWT, getBearerToken } from "../utils/auth.js";
+import { makeJWT, validateJWT } from "../utils/auth.js";
 import { UnauthorizedError } from "../utils/errorClasses.js";
 describe("JWT Authentication", () => {
     const userID1 = "1";
@@ -63,30 +63,5 @@ describe("JWT Authentication", () => {
     });
     it("should throw UnauthorizedError for non-jwt input", () => {
         expect(() => validateJWT("not-a-token", secret)).toThrowError(UnauthorizedError);
-    });
-    describe("getBearerToken", () => {
-        it("extracts the token when Authorization header contains 'Bearer <token>'", () => {
-            const token = "tok-123";
-            const req = {
-                get: (_) => `Bearer ${token}`,
-            };
-            expect(getBearerToken(req)).toBe(token);
-        });
-        it("trims whitespace around token", () => {
-            const req = {
-                get: (_) => `Bearer    padded-token   `,
-            };
-            expect(getBearerToken(req)).toBe("padded-token");
-        });
-        it("throws UnauthorizedError when Authorization header is missing", () => {
-            const req = { get: (_) => undefined };
-            expect(() => getBearerToken(req)).toThrowError(UnauthorizedError);
-        });
-        it("does not strip lowercase 'bearer' prefix (current behavior)", () => {
-            const req = {
-                get: (_) => `bearer lower-token`,
-            };
-            expect(getBearerToken(req)).toBe("bearer lower-token");
-        });
     });
 });

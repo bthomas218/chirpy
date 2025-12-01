@@ -41,18 +41,6 @@ export function validateJWT(tokenString, secret) {
     }
     return decoded.sub;
 }
-/**
- * Extracts Bearer Token from a request
- * @param req Request object to get the token from
- * @returns the token
- */
-export function getBearerToken(req) {
-    const bearerToken = req.get("Authorization");
-    if (!bearerToken) {
-        throw new UnauthorizedError("Unauthorized");
-    }
-    return bearerToken.replace("Bearer", "").trim();
-}
 export function makeRefreshToken() {
     return crypto.randomBytes(32).toString("hex");
 }
